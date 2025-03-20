@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tbahin <tbahin@student.42.fr>              +#+  +:+       +#+         #
+#    By: rita <rita@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/07 16:04:41 by tbahin            #+#    #+#              #
-#    Updated: 2025/02/17 21:41:48 by tbahin           ###   ########.fr        #
+#    Updated: 2025/03/20 15:21:03 by rita             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,27 +17,32 @@ INCLUDE = ./includes/
 CC = cc
 CFLAG = -Wall -Wextra -Werror
 
-SRCS =./srcs/pipex.c ./srcs/parsing.c ./srcs/outils.c ./srcs/multi_pipe.c
+SRCS = ./srcs/pipex.c ./srcs/parsing.c ./srcs/outils.c ./srcs/multi_pipe.c
 
-OBJS = ${SRCS:.c=.o}
+OBJDIR = ./objects
+OBJS = $(SRCS:./srcs/%.c=$(OBJDIR)/%.o)
 
-all : ${NAME} 
+all: $(NAME)
 
-${NAME} : $(OBJS)
+$(NAME): $(OBJS)
 	make bonus -C ./libft
 	$(CC) $(CFLAG) -o $(NAME) $(OBJS) -L./libft -lft
 
-%.o: %.c
+$(OBJDIR)/%.o: ./srcs/%.c | $(OBJDIR)
 	$(CC) $(CFLAG) -I $(INCLUDE) -c $< -o $@
 
-clean :
-	rm -f ${OBJS}
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
+
+clean:
+	rm -f $(OBJS)
 	make clean -C ./libft
 
-fclean : clean
-	rm -f ${NAME}
+fclean: clean
+	rm -f $(NAME)
 	make fclean -C ./libft
+	rm -rf $(OBJDIR)
 
-re : fclean all
+re: fclean all
 
-.phony : all clean fclean re bonus
+.phony: all clean fclean re bonus
